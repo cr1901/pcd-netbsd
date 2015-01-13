@@ -1,0 +1,21 @@
+Index: sys/dev/isa/files.isa
+===================================================================
+RCS file: /cvsroot/src/sys/dev/isa/files.isa,v
+retrieving revision 1.163
+diff -u -u -r1.163 files.isa
+--- sys/dev/isa/files.isa       10 Jun 2013 07:14:02 -0000      1.163
++++ sys/dev/isa/files.isa       13 Jan 2015 02:16:41 -0000
+@@ -145,6 +145,12 @@
+ file   dev/isa/mcd.c                   mcd                     needs-flag
+ defflag                        MCD_PROMISC             # enable "promiscuous" match
+
++#Panasonic/Matsushita CD-ROM controllers
++device pcd: disk
++attach pcd at isa
++file   dev/isa/pcd.c                   pcd                     needs-flag
++
++
+ attach wdc at isa with wdc_isa
+ file   dev/isa/wdc_isa.c               wdc_isa
+
+

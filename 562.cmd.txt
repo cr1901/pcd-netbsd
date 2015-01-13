@@ -1,0 +1,82 @@
+/*  Commands for Panasonic 56x CD drive  */
+
+Command		Hex code		# bytes	Resp.	Note
+===========================================================================
+
+Seek		01 M S F 0 0 0		1
+Spin up		02 0 0 0 0 0 0 		1
+Status		05 0 0 0 0 0 0		1	Only get status
+Tray out	06 0 0 0 0 0 0		1	Eject tray
+Tray in 	07 0 0 0 0 0 0		1	Close tray
+Abort		08			1
+Set mode	09 5 0 1 v 2 v		1	Set volume (patch), v = volume
+		09 3 0 s s 0 0		1	Set audio play speed
+		09 3 80 s s 0 0		1	Set double speed (?)
+		09 3 40 s s 0 0		1	Set single speed (?)
+		09 0 x Z z 0 0		1	Set frame size Z: MSB, z: LSB
+						x=82 if size=2352
+						x=00 otherwise
+Reset		0a 0 0 0 0 0 0		0	Reset drive
+Lock ctl	0c L 0 0 0 0 0		1	L=1 lock, L=0 unlock
+Pause resume	0d P 0 0 0 0 0		1	P=80 resume, P=0 pause
+Play MSF	0e m s f M S F		1	play from m-s-f to M-S-F
+Play track/ind	0f t i T I 0 0		1	play from t i to T I
+Read		10 M S F 0 0 n		1	read n blocks
+Subchannel info	11
+Read error	82 0 0 0 0 0 0 		9	Get error code
+Read version	83 0 0 0 0 0 0		11	Get version string
+Get mode	84 5 0 0 0 0 0		6	Get audio volume & patch
+Capacity	85 0 0 0 0 0 0		6
+Read SubQ	87
+Read UPC	88				Read universal product code
+Diskinfo	8b 0 0 0 0 0 0		7	Read disk info
+Read TOC	8c 0 e 0 0 0 0		9	Read TOC entry e
+Multisession	8d
+Packet		8e
+
+NOTE:
+1. Last byte got from the drive is always a status byte.
+2. Driver always should wait for no error & ready state before issuing 
+command.  (There may be a disk change between two commands, so we
+don't know the state of the drive.)
+================================================================
+
+Addresses:
+
+Command	(o)	=	base
+Select (o)	=	base + 1
+Reset (o)	=	base + 2
+Enable (o)	=	base + 3
+
+Info (i)	=	base
+Status (i)	=	base + 1
+Data (i)	=	base + 2  (base)
+
+Error codes:
+
+00	No error
+01	Soft read error after retry
+02	Soft read error after error correction
+03	Not ready
+04	Cannot read TOC
+05	Hard read error
+06	Seek didn't complete
+07	Tracking servo failure
+08	Drive RAM error
+09	Self-test failed
+0a	Focusing servo failure
+0b	Spindle servo failure
+0c	Data path failure
+0d	Illegal logical block address
+0e	Illegal field in CDB
+0f	End of user encountered on this track ?
+10	Illegal data mode for this track
+11	Media changed
+12	Power-on or reset occured
+13	Drive ROM failure
+14	Illegal drive command from the host
+15	Disc removed during operation
+16	Drive hardware error
+17	Illegal request from host
+
+
